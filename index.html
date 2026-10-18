@@ -72,8 +72,7 @@
 
   .galaxy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; width: 100%; max-width: 720px; }
   .planet-card { display: flex; flex-direction: column; align-items: center; gap: 10px; background: #0d1b40; border: 1.5px solid #1e2f60; border-radius: 20px; padding: 20px 12px; cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; position: relative; overflow: hidden; }
-  .planet-card:hover:not(.locked) { transform: translateY(-4px); box-shadow: 0 8px 32px #7b5cfa44; border-color: var(--accent2); }
-  .planet-card.locked { opacity: .5; cursor: default; }
+  .planet-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px #7b5cfa44; border-color: var(--accent2); }
   .planet-card.done { border-color: var(--success); }
   .planet-card.done::after { content: '✓'; position: absolute; top: 10px; right: 12px; color: var(--success); font-size: 16px; font-weight: 800; }
   .planet-svg { width: 80px; height: 80px; }
@@ -317,7 +316,7 @@ const PLANETS = [
     rewardTitle: '🧀 Планета Сырная открыта!', rewardText: 'Ты узнал, что домашний сыр — это просто, вкусно и выгодно. Тебя ждут рецепты от моцареллы до пармезана!'
   },
   {
-    id: 'milk', name: 'Планета Молочная', sub: 'Йогурт, кефир, ряженка', svgKey: 'milk',
+    id: 'milk', name: 'Планета Кисломолочная', sub: 'Йогурт, кефир, ряженка', svgKey: 'milk',
     color: '#60a5fa', stars: 20,
     questions: [
       { q: 'Какой кисломолочный продукт ты любишь больше всего?', opts: ['🥛 Йогурт', '🫙 Кефир', '☕ Ряженка', '🍦 Творог'], fact: '<strong>Интересно:</strong> Домашний йогурт живёт всего 5–7 дней — потому что в нём нет консервантов и он действительно живой!' },
@@ -327,7 +326,7 @@ const PLANETS = [
     rewardTitle: '🥛 Планета Молочная открыта!', rewardText: 'Живые йогурты, нежный кефир и домашний творог — всё это ты сможешь делать сам, зная несколько простых техник!'
   },
   {
-    id: 'bread', name: 'Планета Пшеничная', sub: 'Хлеб и выпечка', svgKey: 'bread',
+    id: 'bread', name: 'Планета Хлебная', sub: 'Хлеб и выпечка', svgKey: 'bread',
     color: '#c2884a', stars: 20,
     questions: [
       { q: 'Какой хлеб ты хотел бы испечь дома?', opts: ['🍞 Классический белый', '🌾 Ржаной на закваске', '🧄 Чесночный чиабатта', '🌰 Зерновой с семенами'], fact: '<strong>Хлеб на закваске</strong> хранится до 5–7 дней и не плесневеет — потому что натуральная кислота его защищает. Плюс он намного полезнее дрожжевого.' },
@@ -347,7 +346,7 @@ const PLANETS = [
     rewardTitle: '🍰 Планета Сладкая открыта!', rewardText: 'Мир десертов — это магия! Ты узнал, что сладкое хобби может стать настоящим мастерством и даже источником дохода.'
   },
   {
-    id: 'meat', name: 'Планета Мясная', sub: 'Колбасы и деликатесы', svgKey: 'meat',
+    id: 'meat', name: 'Планета Колбасная', sub: 'Колбасы и деликатесы', svgKey: 'meat',
     color: '#ef4444', stars: 20,
     questions: [
       { q: 'Какой мясной продукт ты хотел бы делать дома?', opts: ['🌭 Варёная колбаса', '🥩 Ветчина', '🍖 Вяленое мясо', '🥓 Домашний бекон'], fact: '<strong>Домашняя колбаса</strong> из натурального мяса — это совсем другой продукт. Никакого крахмала, сои и нитритов. Только мясо, специи и твои руки.' },
@@ -386,17 +385,14 @@ function renderMap(){
   grid.innerHTML = '';
   PLANETS.forEach((p,i) => {
     const done = state.completed.includes(p.id);
-    const locked = i > 0 && !state.completed.includes(PLANETS[i-1].id);
     const card = document.createElement('div');
-    card.className = 'planet-card' + (locked?' locked':'') + (done?' done':'');
+    card.className = 'planet-card' + (done?' done':'');
     card.innerHTML = `
       <div class="planet-svg">${SVG[p.svgKey]}</div>
       <div class="planet-name">${p.name}</div>
       <div class="planet-stars">⭐ ${p.stars} звёзд</div>
-      ${locked ? '<div class="lock-icon">🔒</div>' : ''}
     `;
-    if(!locked && !done) card.onclick = () => openPlanet(p.id);
-    if(done) card.onclick = () => openPlanet(p.id);
+    card.onclick = () => openPlanet(p.id);
     grid.appendChild(card);
   });
   const done = state.completed.length;
